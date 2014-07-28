@@ -2,11 +2,11 @@
 
     FOOGALLERY.media_uploader = false;
     FOOGALLERY.previous_post_id = 0;
-    FOOGALLERY.attachments = new Array();
+    FOOGALLERY.attachments = [];
     FOOGALLERY.selected_attachment_id = 0;
 
     FOOGALLERY.calculateAttachmentIds = function() {
-        var sorted = new Array();
+        var sorted = [];
         $('.foogallery-attachments-list li:not(.add-attachment)').each(function() {
             sorted.push( $(this).data('attachment-id') );
         });
@@ -71,10 +71,7 @@
 
         $template.attr('data-attachment-id', attachment.id);
 
-        $template.find('img')
-            .attr('src', attachment.src)
-            .attr('width', attachment.width)
-            .attr('height', attachment.height);
+        $template.find('img').attr('src', attachment.src);
 
         $('.foogallery-attachments-list .add-attachment').before($template);
 
@@ -88,7 +85,7 @@
         if (index !== -1) {
             FOOGALLERY.attachments.splice(index, 1);
         }
-		$('[data-attachment-id="' + id + '"').remove();
+		$('[data-attachment-id="' + id + '"]').remove();
 
         FOOGALLERY.calculateAttachmentIds();
     };
@@ -111,6 +108,7 @@
 		// Create the media frame.
 		FOOGALLERY.media_uploader = wp.media.frames.file_frame = wp.media({
 			title: $(this).data( 'uploader-title' ),
+			//frame: 'post',
 			button: {
 				text: $(this).data( 'uploader-button-text' )
 			},
@@ -123,19 +121,21 @@
 				var attachments = FOOGALLERY.media_uploader.state().get('selection').toJSON();
 
 				$.each(attachments, function(i, item) {
-					var attachment = {
-						id : item.id,
-						width: item.sizes.thumbnail.width,
-						height: item.sizes.thumbnail.height,
-						src: item.sizes.thumbnail.url
-					};
+					if (item && item.id && item.sizes && item.sizes.thumbnail) {
+						var attachment = {
+							id: item.id,
+							src: item.sizes.thumbnail.url
+						};
 
-					FOOGALLERY.addAttachmentToGalleryList(attachment);
+						FOOGALLERY.addAttachmentToGalleryList(attachment);
+					} else {
+						//there was a problem adding the item! Move on to the next
+					}
 				});
 			})
 			.on( 'open', function() {
 				var selection = FOOGALLERY.media_uploader.state().get('selection');
-				selection.set();    //clear any previos selections
+				if (selection) { selection.set(); }   //clear any previos selections
 
 				if (FOOGALLERY.selected_attachment_id > 0) {
 					var attachment = wp.media.attachment(FOOGALLERY.selected_attachment_id);
@@ -183,7 +183,8 @@
 		FOOGALLERY.initUsageMetabox();
 
         $('.foogallery-attachments-list')
-            .on('click' ,'a.remove', function() {
+            .on('click' ,'a.remove', function(e) {
+				e.preventDefault();
                 var $selected = $(this).parents('li:first'),
 					attachment_id = $selected.data('attachment-id');
                 FOOGALLERY.removeAttachmentFromGalleryList(attachment_id);

@@ -64,7 +64,8 @@
 			if ( $(this).attr('disabled') ) {
 				return;
 			}
-			var shortcode = '[foogallery id="' + $('.foogallery-gallery-select.selected').data('foogallery-id') + '"]';
+			var shortcode_tag = window.FOOGALLERY_SHORTCODE || 'foogallery',
+				shortcode = '[' + shortcode_tag + ' id="' + $('.foogallery-gallery-select.selected').data('foogallery-id') + '"]';
 			wp.media.editor.insert(shortcode);
 			$('.foogallery-modal-wrapper').hide();
 		});
@@ -82,7 +83,7 @@
 	FOOGALLERY.clearSelection = function() {
 		$('.foogallery-gallery-select').removeClass('selected');
 		FOOGALLERY.changeSelection();
-	}
+	};
 
 	$(function() { //wait for ready
 		FOOGALLERY.bindEditorButton();

@@ -8,31 +8,6 @@ if ( isset( $_POST['foogallery_nextgen_reset'] ) ) {
 }
 ?>
 <style>
-	.foogallery-help {
-		display: block;
-		line-height: 19px;
-		padding: 11px 15px 11px 5px;
-		font-size: 14px;
-		text-align: left;
-		margin: 5px 0 20px 2px;
-		background-color: #fff;
-		border-left: 4px solid #1e8cbe;
-		-webkit-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .1);
-		box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .1);
-	}
-
-	.foogallery-help:before {
-		content: "\f223";
-		font: 400 20px/1 dashicons !important;
-		speak: none;
-		color: #1e8cbe;
-		display: inline-block;
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
-		padding-left: 5px;
-		vertical-align: bottom;
-	}
-
 	.spinner.shown {
 		display: inline !important;
 		margin: 0;
@@ -84,7 +59,7 @@ if ( isset( $_POST['foogallery_nextgen_reset'] ) ) {
 				success: success_callback,
 				error: function() {
 					//something went wrong! Alert the user and reload the page
-					alert('<?php _e('Something went wrong with the import and the page will now reload. Once it has reloaded, click "Resume Import" to continue with the import.', 'foogallery'); ?>');
+					alert('<?php _e( 'Something went wrong with the import and the page will now reload. Once it has reloaded, click "Resume Import" to continue with the import.', 'foogallery' ); ?>');
 					location.reload();
 				}
 			});
@@ -125,14 +100,14 @@ if ( isset( $_POST['foogallery_nextgen_reset'] ) ) {
 		});
 
 		$('#nextgen_import_form').on('click', '.cancel_import', function (e) {
-			if (!confirm('<?php echo __('Are you sure you want to cancel?', 'foogallery'); ?>')) {
+			if (!confirm('<?php _e( 'Are you sure you want to cancel?', 'foogallery' ); ?>')) {
 				e.preventDefault();
 				return false;
 			}
 		});
 
 		$('#nextgen_import_form').on('click', '.reset_import', function (e) {
-			if (!confirm('<?php echo __('Are you sure you want to reset all NextGen import data? This may result in duplicate galleries and media attachments!', 'foogallery'); ?>')) {
+			if (!confirm('<?php _e( 'Are you sure you want to reset all NextGen import data? This may result in duplicate galleries and media attachments!', 'foogallery' ); ?>')) {
 				e.preventDefault();
 				return false;
 			}
@@ -143,14 +118,13 @@ if ( isset( $_POST['foogallery_nextgen_reset'] ) ) {
 	<h2><?php _e( 'NextGen Gallery Importer', 'foogallery' ); ?></h2>
 
 	<div class="foogallery-help">
-		<?php _e( 'Choose the NextGen galleries you want to import into FooGallery. Please note that importing galleries with lots of images can take a while.', 'foogallery' ); ?>
+		<?php printf( __( 'Choose the NextGen galleries you want to import into %s. Please note that importing galleries with lots of images can take a while.', 'foogallery' ), foogallery_plugin_name() ); ?>
 	</div>
 	<?php
 	$galleries = $nextgen->get_galleries();
-	if ( !$galleries ) {
+	if ( ! $galleries ) {
 		_e( 'There are no NextGen galleries to import!', 'foogallery' );
-	} else {
-		?>
+	} else { ?>
 		<form id="nextgen_import_form" method="POST">
 			<?php $nextgen->render_import_form( $galleries ); ?>
 		</form>

@@ -26,7 +26,7 @@ if ( ! class_exists( 'FooGallery_Nextgen_Gallery_Importer_Extension' ) ) {
 
 				// Ajax calls for importing
 				add_action( 'wp_ajax_foogallery_nextgen_import', array( $this, 'ajax_nextgen_start_import' ) );
-				add_action( 'wp_ajax_foogallery_nextgen_import_refresh', array(	$this, 'ajax_nextgen_continue_import') );
+				add_action( 'wp_ajax_foogallery_nextgen_import_refresh', array(	$this, 'ajax_nextgen_continue_import' ) );
 				add_action( 'wp_ajax_foogallery_nextgen_import_cancel', array( $this, 'ajax_nextgen_cancel_import' ) );
 				add_action( 'wp_ajax_foogallery_nextgen_import_reset', array( $this, 'ajax_nextgen_reset_import' ) );
 			}
@@ -35,7 +35,7 @@ if ( ! class_exists( 'FooGallery_Nextgen_Gallery_Importer_Extension' ) ) {
 		function add_menu() {
 			foogallery_add_submenu_page( __( 'NextGen Importer', 'foogallery' ), 'manage_options', 'foogallery-nextgen-importer', array(
 					$this,
-					'render_view'
+					'render_view',
 				) );
 		}
 
@@ -119,7 +119,9 @@ if ( ! class_exists( 'FooGallery_Nextgen_Gallery_Importer_Extension' ) ) {
 
 					<h4><?php _e( 'Import Galleries', 'foogallery' ); ?></h4>
 
-					<p><?php _e( 'Import all your NextGen galleries in a single click, or choose the galleries you would like to migrate over to FooGallery.', 'foogallery' ); ?></p>
+
+
+					<p><?php printf( __( 'Import all your NextGen galleries in a single click, or choose the galleries you would like to migrate over to %s.', 'foogallery' ), foogallery_plugin_name() ); ?></p>
 
 					<h4><?php _e( 'Import Images', 'foogallery' ); ?></h4>
 

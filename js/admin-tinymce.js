@@ -15,12 +15,19 @@
 			return node && /foogallery-tinymce-view/.test( node.className );
 		}
 
+		function unselectFooGallery( dom ) {
+			dom.removeClass(dom.select('div.foogallery-tinymce-selected'), 'foogallery-tinymce-selected');
+		}
+
 		editor.on( 'BeforeSetContent', function( event ) {
 			if ( ! event.content ) {
 				return;
 			}
 
-			event.content = event.content.replace( /\[foogallery([^\]]*)\]/g, function( match ) {
+			var shortcode_tag = window.FOOGALLERY_SHORTCODE || 'foogallery',
+				regexp = new RegExp('\\[' + shortcode_tag + '([^\\]]*)\\]', 'g');
+
+			event.content = event.content.replace( regexp, function( match ) {
 
 				var data = window.encodeURIComponent( match ),
 					idRegex = / id=\"(.*?)\"/ig,
@@ -79,7 +86,6 @@
 							}
 							if (galleryImg && galleryImg.length) {
 								jQuery(galleryImg[0]).replaceWith('<img src="' + data.src + '" />');
-								//jQuery(galleryImg[0]).css('background', 'url("' + data.src + '") no-repeat');
 							}
 						}
 					});
@@ -120,9 +126,7 @@
 			// Don't trigger on right-click
 			if ( event.button !== 2 ) {
 
-				function unselect() {
-					dom.removeClass(dom.select('div.foogallery-tinymce-selected'), 'foogallery-tinymce-selected');
-				}
+
 
 				if (fg) {
 					//we have clicked somewhere in the foogallery element
@@ -135,13 +139,13 @@
 					} else {
 
 						if (!dom.hasClass(fg, 'foogallery-tinymce-selected')) {
-							unselect();
+							unselectFooGallery(dom);
 							dom.addClass(fg, 'foogallery-tinymce-selected');
 						}
 
 					}
 				} else {
-					unselect();
+					unselectFooGallery(dom);
 				}
 			}
 		});

@@ -3,19 +3,19 @@
  * FooGallery Custom Post Types and Custom Taxonomy Registration class
  */
 
-if ( !class_exists( 'FooGallery_PostTypes' ) ) {
+if ( ! class_exists( 'FooGallery_PostTypes' ) ) {
 
 	class FooGallery_PostTypes {
 
 		function __construct() {
 			//register the post types
-			add_action( 'init', array($this, 'register') );
+			add_action( 'init', array( $this, 'register' ) );
 
 			//update post type messages
-			add_filter( 'post_updated_messages', array($this, 'update_messages') );
+			add_filter( 'post_updated_messages', array( $this, 'update_messages' ) );
 
 			//update post bulk messages
-			add_filter( 'bulk_post_updated_messages', array($this, 'update_bulk_messages'), 10, 2 );
+			add_filter( 'bulk_post_updated_messages', array( $this, 'update_bulk_messages' ), 10, 2 );
 		}
 
 		function register() {
@@ -33,7 +33,7 @@ if ( !class_exists( 'FooGallery_PostTypes' ) ) {
 						'search_items'       => __( 'Search Galleries', 'foogallery' ),
 						'not_found'          => __( 'No Galleries found', 'foogallery' ),
 						'not_found_in_trash' => __( 'No Galleries found in Trash', 'foogallery' ),
-						'menu_name'          => __( 'FooGallery', 'foogallery' ),
+						'menu_name'          => foogallery_plugin_name(),
 						'all_items'          => __( 'Galleries', 'foogallery' )
 					),
 					'hierarchical'  => false,
@@ -43,7 +43,7 @@ if ( !class_exists( 'FooGallery_PostTypes' ) ) {
 					'show_in_menu'  => true,
 					'menu_position' => 30,
 					'menu_icon'     => 'dashicons-format-gallery',
-					'supports'      => array('title', 'thumbnail')
+					'supports'      => array( 'title', 'thumbnail', ),
 				)
 			);
 
@@ -59,7 +59,7 @@ if ( !class_exists( 'FooGallery_PostTypes' ) ) {
 		 *
 		 * @return array $messages Amended array of post updated messages.
 		 */
-		public function update_messages($messages) {
+		public function update_messages( $messages ) {
 
 			global $post;
 
@@ -92,7 +92,7 @@ if ( !class_exists( 'FooGallery_PostTypes' ) ) {
 		 *
 		 * @return array mixed            Amended array of bulk updated messages.
 		 */
-		function update_bulk_messages($bulk_messages, $bulk_counts) {
+		function update_bulk_messages( $bulk_messages, $bulk_counts ) {
 
 			$bulk_messages[FOOGALLERY_CPT_GALLERY] = apply_filters( 'foogallery_gallery_posttype_bulk_update_messages',
 				array(

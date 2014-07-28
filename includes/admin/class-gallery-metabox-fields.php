@@ -1,14 +1,15 @@
 <?php
 
-if ( !class_exists( 'FooGallery_Admin_Gallery_MetaBox_Fields' ) ) {
+if ( ! class_exists( 'FooGallery_Admin_Gallery_MetaBox_Fields' ) ) {
 
 	class FooGallery_Admin_Gallery_MetaBox_Fields {
+
 		function __construct() {
 			//handle some default field types that all templates can reuse
 			add_filter( 'foogallery_alter_gallery_template_field', array( $this, 'alter_gallery_template_field' ), 10, 2 );
 
 			//render the different types of fields for our gallery settings
-			add_action( 'foogallery_render_gallery_template_field', array( $this, 'render_gallery_template_field'), 10, 3 );
+			add_action( 'foogallery_render_gallery_template_field', array( $this, 'render_gallery_template_field' ), 10, 3 );
 		}
 
 		/**
@@ -18,14 +19,11 @@ if ( !class_exists( 'FooGallery_Admin_Gallery_MetaBox_Fields' ) ) {
 		 * @param       $gallery FooGallery
 		 * @param       $template
 		 */
-		function render_gallery_template_field($field = array(), $gallery, $template) {
+		function render_gallery_template_field( $field = array(), $gallery, $template ) {
 			$template_slug = $template['slug'];
 
 			//only declare up front so no debug warnings are shown
 			$type = $id = $desc = $default = $placeholder = $choices = $class = $spacer = null;
-
-			//allow for the field to be altered by extensions. Also used by the build-in fields, e.g. lightbox
-			$field = apply_filters( 'foogallery_alter_gallery_template_field', $field, $gallery );
 
 			extract( $field );
 
@@ -54,7 +52,7 @@ if ( !class_exists( 'FooGallery_Admin_Gallery_MetaBox_Fields' ) ) {
 				case 'checkbox':
 					if ( isset($gallery->settings[$id]) && $gallery->settings[$id] == 'on' ) {
 						$field['value'] = 'on';
-					} else if ( !isset($gallery->settings) && $default == 'on' ) {
+					} else if ( ! isset($gallery->settings) && $default == 'on' ) {
 						$field['value'] = 'on';
 					} else {
 						$field['value'] = '';
@@ -99,7 +97,7 @@ if ( !class_exists( 'FooGallery_Admin_Gallery_MetaBox_Fields' ) ) {
 					break;
 
 				case 'text':
-					echo '<input' . $field_class . '" type="number" id="FooGallerySettings_' . $id . '" name="' . FOOGALLERY_META_SETTINGS . '[' . $id . ']" value="' . esc_attr( $field['value'] ) . '" />';
+					echo '<input' . $field_class . '" type="text" id="FooGallerySettings_' . $id . '" name="' . FOOGALLERY_META_SETTINGS . '[' . $id . ']" value="' . esc_attr( $field['value'] ) . '" />';
 
 					break;
 
@@ -143,17 +141,17 @@ if ( !class_exists( 'FooGallery_Admin_Gallery_MetaBox_Fields' ) ) {
 					break;
 
 				case 'thumb_size':
-					$width = is_array($field['value']) ? $field['value']['width'] : 150;
-					$height = is_array($field['value']) ? $field['value']['height'] : 150;
-					$crop = is_array($field['value']) && array_key_exists('crop', $field['value']) ? $field['value']['crop'] : 0;
-					$crop_checked = ($crop == 1) ? ' checked="checked"' : '';
-					echo '<label for="FooGallerySettings_' . $id . '_width">' . __('Width', 'foogallery') . '</label>';
+					$width = is_array( $field['value'] ) ? $field['value']['width'] : 150;
+					$height = is_array( $field['value'] ) ? $field['value']['height'] : 150;
+					$crop = is_array( $field['value'] ) && array_key_exists( 'crop', $field['value'] ) ? $field['value']['crop'] : 0;
+					$crop_checked = ( $crop == 1 ) ? ' checked="checked"' : '';
+					echo '<label for="FooGallerySettings_' . $id . '_width">' . __( 'Width', 'foogallery' ) . '</label>';
 					echo '<input class="small-text" type="number" step="1" min="0" id="FooGallerySettings_' . $id . '_width" name="' . FOOGALLERY_META_SETTINGS . '[' . $id . '][width]" value="' . esc_attr( $width ) . '" />';
-					echo '<label for="FooGallerySettings_' . $id . '_width">' . __('Height', 'foogallery') . '</label>';
+					echo '<label for="FooGallerySettings_' . $id . '_width">' . __( 'Height', 'foogallery' ) . '</label>';
 					echo '<input class="small-text" type="number" step="1" min="0" id="FooGallerySettings_' . $id . '_height" name="' . FOOGALLERY_META_SETTINGS . '[' . $id . '][height]" value="' . esc_attr( $height ) . '" />';
 					echo '<input name="' . FOOGALLERY_META_SETTINGS . '[' . $id . '][crop]" type="hidden" id="FooGallerySettings_' . $id . '_nocrop" value="0" />';
 					echo '<input name="' . FOOGALLERY_META_SETTINGS . '[' . $id . '][crop]" type="checkbox" id="FooGallerySettings_' . $id . '_crop" value="1"' . $crop_checked . '>';
-					echo '<label for="FooGallerySettings_' . $id . '_crop">' . __('Crop thumbnail to exact dimensions', 'foogallery') . '</label>';
+					echo '<label for="FooGallerySettings_' . $id . '_crop">' . __( 'Crop thumbnail to exact dimensions', 'foogallery' ) . '</label>';
 					break;
 
 				default:
@@ -172,7 +170,7 @@ if ( !class_exists( 'FooGallery_Admin_Gallery_MetaBox_Fields' ) ) {
 
 		function alter_gallery_template_field( $field, $gallery ) {
 			if ( $field ) {
-				switch ($field['type']) {
+				switch ( $field['type'] ) {
 //					case 'thumb_size':
 //						$field['type'] = 'select';
 //						$field['choices'] = $this->get_thumb_size_choices();
@@ -185,31 +183,35 @@ if ( !class_exists( 'FooGallery_Admin_Gallery_MetaBox_Fields' ) ) {
 						$lightboxes = $this->get_lightbox_field_choices();
 						if ( 0 === count( $lightboxes ) ) {
 							$field['type'] = 'html';
-							$field['desc'] = '<strong>' . __('You have no lightbox extensions activated!', 'foogallery' ) . '</strong><br />';
+							$field['desc'] = '<strong>' . __( 'You have no lightbox extensions activated!', 'foogallery' ) . '</strong><br />';
 							$api = new FooGallery_Extensions_API();
 							if ( $api->is_downloaded( false, FOOGALLERY_FOOBOX_FREE_EXTENSION_SLUG ) ) {
 								//just need to activate it
 								$foobox_install_link = foogallery_build_admin_menu_url( array(
 									'page' => 'foogallery-extensions',
 									'extension' => FOOGALLERY_FOOBOX_FREE_EXTENSION_SLUG,
-									'action' => 'activate'
+									'action' => 'activate',
 								));
-								$field['desc'] .= '<a target="_blank" href="' . $foobox_install_link . '">' . __('Activate FooBox FREE right now!', 'foogallery') . '</a>';
+								$field['desc'] .= '<a target="_blank" href="' . $foobox_install_link . '">' . __( 'Activate FooBox FREE right now!', 'foogallery' ) . '</a>';
 							} else {
 								//we need to download it
 								$foobox_install_link = foogallery_build_admin_menu_url( array(
 									'page' => 'foogallery-extensions',
 									'extension' => FOOGALLERY_FOOBOX_FREE_EXTENSION_SLUG,
-									'action' => 'download'
+									'action' => 'download',
 								));
-								$foobox_install_html = '<a target="_blank" href="' . $foobox_install_link . '">' . __('Download and activate FooBox FREE', 'foogallery') . '</a>';
-								$field['desc'] .= sprintf ( __('%s which works flawlessly with FooGallery.', 'foogallery'), $foobox_install_html );
+								$foobox_install_html = '<a target="_blank" href="' . $foobox_install_link . '">' . __( 'Download and activate FooBox FREE', 'foogallery' ) . '</a>';
+								$field['desc'] .= sprintf( __( '%s which works flawlessly with %s.', 'foogallery' ), $foobox_install_html, foogallery_plugin_name() );
 							}
 						} else {
 							$field['type'] = 'select';
 							$field['choices'] = $lightboxes;
 						}
 						break;
+				}
+
+				if ( isset($field['help']) && $field['help'] ) {
+					$field['type'] = 'help';
 				}
 			}
 			return $field;
@@ -220,10 +222,10 @@ if ( !class_exists( 'FooGallery_Admin_Gallery_MetaBox_Fields' ) ) {
 			$sizes = array();
 			foreach( get_intermediate_image_sizes() as $s ){
 				$sizes[ $s ] = array( 0, 0 );
-				if( in_array( $s, array( 'thumbnail', 'medium', 'large' ) ) ){
+				if ( in_array( $s, array( 'thumbnail', 'medium', 'large', ) ) ){
 					$sizes[ $s ] = $s . ' (' . get_option( $s . '_size_w' ) . 'x' . get_option( $s . '_size_h' ) . ')';
-				}else{
-					if( isset( $_wp_additional_image_sizes ) && isset( $_wp_additional_image_sizes[ $s ] ) )
+				} else {
+					if ( isset( $_wp_additional_image_sizes ) && isset( $_wp_additional_image_sizes[ $s ] ) )
 						$sizes[ $s ] = $s . ' (' . $_wp_additional_image_sizes[ $s ]['width'] . 'x' . $_wp_additional_image_sizes[ $s ]['height'] . ')';
 				}
 			}
@@ -231,15 +233,17 @@ if ( !class_exists( 'FooGallery_Admin_Gallery_MetaBox_Fields' ) ) {
 		}
 
 		function get_thumb_link_field_choices() {
-			return apply_filters('foogallery_gallery_template_field_thumb_links', array(
-				'image' => __('Full Size Image', 'foogallery'),
-				'page' => __('Image Attachment Page', 'foogallery'),
-				'none' => __('Not linked', 'foogallery')
+			return apply_filters( 'foogallery_gallery_template_field_thumb_links', array(
+				'image' => __( 'Full Size Image', 'foogallery' ),
+				'page'  => __( 'Image Attachment Page', 'foogallery' ),
+				'none'  => __( 'Not linked', 'foogallery' ),
 			) );
 		}
 
 		function get_lightbox_field_choices() {
-			return apply_filters( 'foogallery_gallery_template_field_lightboxes', array() );
+			$lightboxes = apply_filters( 'foogallery_gallery_template_field_lightboxes', array() );
+			$lightboxes['none'] = __( 'None', 'foogallery' );
+			return $lightboxes;
 		}
 	}
 }

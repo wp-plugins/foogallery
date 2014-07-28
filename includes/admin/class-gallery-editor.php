@@ -4,7 +4,7 @@
  * FooGallery Admin Gallery MetaBoxes class
  */
 
-if ( !class_exists( 'FooGallery_Admin_Gallery_Editor' ) ) {
+if ( ! class_exists( 'FooGallery_Admin_Gallery_Editor' ) ) {
 
 	class FooGallery_Admin_Gallery_Editor {
 
@@ -13,15 +13,15 @@ if ( !class_exists( 'FooGallery_Admin_Gallery_Editor' ) ) {
 		 */
 		public function __construct() {
 			//adds a media button to the editor
-			add_filter( 'media_buttons_context', array($this, 'add_media_button') );
+			add_filter( 'media_buttons_context', array( $this, 'add_media_button' ) );
 
 			//add a tinymce plugin
-			add_action( 'admin_head', array($this, 'add_tinymce_plugin') );
+			add_action( 'admin_head', array( $this, 'add_tinymce_plugin' ) );
 
 			// Ajax calls for showing all galleries in the modal
-			add_action( 'wp_ajax_foogallery_load_galleries', array($this, 'ajax_galleries_html') );
+			add_action( 'wp_ajax_foogallery_load_galleries', array( $this, 'ajax_galleries_html' ) );
 
-			add_action( 'wp_ajax_foogallery_tinymce_load_info', array($this, 'ajax_get_gallery_info') );
+			add_action( 'wp_ajax_foogallery_tinymce_load_info', array( $this, 'ajax_get_gallery_info' ) );
 		}
 
 		/**
@@ -31,17 +31,17 @@ if ( !class_exists( 'FooGallery_Admin_Gallery_Editor' ) ) {
 		 *
 		 * @return string $buttons    the amended media buttons
 		 */
-		public function add_media_button($buttons) {
+		public function add_media_button( $buttons ) {
 
 			//render the gallery modal
-			add_action( 'admin_footer', array($this, 'render_gallery_modal') );
+			add_action( 'admin_footer', array( $this, 'render_gallery_modal' ) );
 
 			$foogallery = FooGallery_Plugin::get_instance();
 
 			$foogallery->register_and_enqueue_js( 'admin-foogallery-editor.js' );
 
-			$buttons .= '<a href="#" class="button foogallery-modal-trigger" title="' . esc_attr__( 'Add Gallery From FooGallery', 'foogallery' ) . '" style="padding-left: .4em;">';
-			$buttons .= '<span class="wp-media-buttons-icon dashicons dashicons-format-gallery"></span> ' . __( 'Add FooGallery', 'foogallery' ) . '</a>';
+			$buttons .= '<a href="#" class="button foogallery-modal-trigger" title="' . esc_attr( sprintf( __( 'Add Gallery From %s', 'foogallery' ), foogallery_plugin_name() ) ) . '" style="padding-left: .4em;">';
+			$buttons .= '<span class="wp-media-buttons-icon dashicons dashicons-format-gallery"></span> ' . sprintf( __( 'Add %s', 'foogallery' ), foogallery_plugin_name() ) . '</a>';
 
 			return $buttons;
 		}
@@ -51,14 +51,14 @@ if ( !class_exists( 'FooGallery_Admin_Gallery_Editor' ) ) {
 		 */
 		public function add_tinymce_plugin() {
 			// check user permissions
-			if ( !current_user_can( 'edit_posts' ) && !current_user_can( 'edit_pages' ) ) {
+			if ( ! current_user_can( 'edit_posts' ) && ! current_user_can( 'edit_pages' ) ) {
 				return;
 			}
 			// check if WYSIWYG is enabled
 			if ( 'true' == get_user_option( 'rich_editing' ) ) {
-				add_filter( 'mce_external_plugins',  array($this, 'add_tinymce_js' ) );
-				add_filter( 'mce_css',  array($this, 'add_tinymce_css' ) );
-				add_action( 'admin_footer', array($this, 'render_tinymce_nonce') );
+				add_filter( 'mce_external_plugins',  array( $this, 'add_tinymce_js' ) );
+				add_filter( 'mce_css',  array( $this, 'add_tinymce_css' ) );
+				add_action( 'admin_footer', array( $this, 'render_tinymce_nonce') );
 			}
 		}
 
@@ -80,8 +80,9 @@ if ( !class_exists( 'FooGallery_Admin_Gallery_Editor' ) ) {
 		 * @return string
 		 */
 		public function add_tinymce_css( $mce_css ) {
-			if ( ! empty( $mce_css ) )
+			if ( ! empty( $mce_css ) ) {
 				$mce_css .= ',';
+			}
 
 			$mce_css .= FOOGALLERY_URL . 'css/admin-tinymce.css'; // . urlencode( '?v=' + FOOGALLERY_VERSION );
 
@@ -256,14 +257,14 @@ if ( !class_exists( 'FooGallery_Admin_Gallery_Editor' ) ) {
 									<?php _e( 'Choose A Gallery To Insert', 'foogallery' ); ?>
 									<div class="foogallery-modal-reload-container">
 										<div class="spinner"></div>
-										<a class="foogallery-modal-reload button" href="#"><span class="dashicons dashicons-update"></span> <?php _e('Reload', 'foogallery'); ?></a>
+										<a class="foogallery-modal-reload button" href="#"><span class="dashicons dashicons-update"></span> <?php _e( 'Reload', 'foogallery' ); ?></a>
 									</div>
 								</h1>
 							</div>
 							<div class="media-frame-content">
 								<div class="attachments-browser">
 									<ul class="foogallery-attachment-container attachments" style="padding-left: 8px; top: 1em;">
-										<div class="foogallery-modal-loading"><?php _e('Loading galleries. Please wait...', 'foogallery'); ?></div>
+										<div class="foogallery-modal-loading"><?php _e( 'Loading galleries. Please wait...', 'foogallery' ); ?></div>
 									</ul>
 									<!-- end .foogallery-meta -->
 									<div class="media-sidebar">
@@ -328,38 +329,37 @@ if ( !class_exists( 'FooGallery_Admin_Gallery_Editor' ) ) {
 				$img_src = $gallery->featured_image_src( array(200, 200) );
 				$images = $gallery->image_count();
 				?>
-	<li class="foogallery-pile">
-		<div class="foogallery-gallery-select attachment-preview landscape" data-foogallery-id="<?php echo $gallery->ID; ?>">
-			<div class="thumbnail" style="display: table;">
-				<div style="display: table-cell; vertical-align: middle; text-align: center;">
-					<img src="<?php echo $img_src; ?>" />
-					<?php
+				<li class="foogallery-pile">
+					<div class="foogallery-gallery-select attachment-preview landscape" data-foogallery-id="<?php echo $gallery->ID; ?>">
+						<div class="thumbnail" style="display: table;">
+							<div style="display: table-cell; vertical-align: middle; text-align: center;">
+								<img src="<?php echo $img_src; ?>" />
+								<?php
 
-					$title = empty( $gallery->name ) ?
-						sprintf( __( 'FooGallery #%s', 'foogallery' ), $gallery->ID ) :
-						$gallery->name;
+								$title = empty( $gallery->name ) ?
+									sprintf( __( '%s #%s', 'foogallery' ), foogallery_plugin_name(), $gallery->ID ) :
+									$gallery->name;
 
-					?>
-					<h3><?php echo $title; ?>
-						<span><?php echo $images; ?></span>
-						<code>[foogallery id="<?php echo $gallery->ID; ?>"]</code>
-					</h3>
-				</div>
-			</div>
-		</div>
-	</li>
-<?php		}
-			?>
-			<li class="foogallery-pile">
-				<div class="foogallery-gallery-select attachment-preview landscape foogallery-add-gallery">
-					<a href="<?php echo foogallery_admin_add_gallery_url(); ?>" target="_blank" class="thumbnail" style="display: table;">
-						<div style="display: table-cell; vertical-align: middle; text-align: center;">
-							<span></span>
-							<h3><?php _e('Add New Gallery', 'foogallery'); ?></h3>
+								?>
+								<h3><?php echo $title; ?>
+									<span><?php echo $images; ?></span>
+									<code>[<?php echo foogallery_gallery_shortcode_tag(); ?> id="<?php echo $gallery->ID; ?>"]</code>
+								</h3>
+							</div>
 						</div>
-					</a>
-				</div>
-			</li>
+					</div>
+				</li>
+				<?php } ?>
+				<li class="foogallery-pile">
+					<div class="foogallery-gallery-select attachment-preview landscape foogallery-add-gallery">
+						<a href="<?php echo foogallery_admin_add_gallery_url(); ?>" target="_blank" class="thumbnail" style="display: table;">
+							<div style="display: table-cell; vertical-align: middle; text-align: center;">
+								<span></span>
+								<h3><?php _e( 'Add New Gallery', 'foogallery' ); ?></h3>
+							</div>
+						</a>
+					</div>
+				</li>
 			<?php
 
 			return ob_get_clean();
@@ -381,7 +381,7 @@ if ( !class_exists( 'FooGallery_Admin_Gallery_Editor' ) ) {
 				'id'    => $id,
 				'name'  => $gallery->name,
 				'count' => $gallery->image_count(),
-				'src'   => $image_src
+				'src'   => $image_src,
 			);
 
 			header( 'Content-type: application/json' );
