@@ -12,7 +12,7 @@ The Most Intuitive and Extensible Gallery Creation and Management Tool Ever Crea
 
 == Description ==
 
-Built to be simple for users and highly flexible for developers. Our #1 goal with FooGallery was to utilize as much of the core image and gallery handling functionality that is already built into WordPress as possible. The result is an intuitive gallery creation and management experience with the added benefit of the powerful features that FooGalley includes.
+Built to be simple for users and highly flexible for developers. Our #1 goal with FooGallery was to utilize as much of the core image and gallery handling functionality that is already built into WordPress as possible. The result is an intuitive gallery creation and management experience with the added benefit of the powerful features that FooGallery includes.
 
 [View the FooGallery Homepage](http://foo.gallery/)
 
