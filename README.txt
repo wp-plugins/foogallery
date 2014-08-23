@@ -50,6 +50,7 @@ Extensions:
 *	[FooBox FREE Lightbox](http://wordpress.org/plugins/foobox-image-lightbox)
 * [Owl Carousel Template](http://wordpress.org/plugins/foogallery-owl-carousel-template/)
 * [ZOOM Template](http://wordpress.org/plugins/foogallery-zoom-template/)
+* [Thirsty Affiliates](http://wordpress.org/plugins/thirstyaffiliates-for-foogallery-extension/)
 *	[Polaroid Template](https://github.com/fooplugins/foogallery-polaroid-template)
 *	[Use Media Menu](https://github.com/fooplugins/foogallery-media-menu)
 *	Albums (coming soon)
