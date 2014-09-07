@@ -87,6 +87,9 @@ Hell, yes! Check out our [developer page](http://foo.gallery/developers/)
 
 == Changelog ==
 
+= 1.1.8.2 =
+* Fixed "edit gallery" CSS with WP 4.0
+
 = 1.1.8.1 =
 * Fixed "insert gallery" CSS with WP 4.0
 
