@@ -12,10 +12,7 @@ if ( ! class_exists( 'FooGallery_Admin_Columns' ) ) {
 		function __construct() {
 			//add_filter( 'manage_upload_columns', array( $this, 'setup_media_columns ') );
 			//add_action( 'manage_media_custom_column', array( $this, 'media_columns_content' ), 10, 2 );
-			add_filter( 'manage_edit-' . FOOGALLERY_CPT_GALLERY . '_columns', array(
-				$this,
-				'gallery_custom_columns'
-			) );
+			add_filter( 'manage_edit-' . FOOGALLERY_CPT_GALLERY . '_columns', array( $this, 'gallery_custom_columns' ) );
 			add_action( 'manage_posts_custom_column', array( $this, 'gallery_custom_column_content' ) );
 			add_action( 'admin_footer', array( $this, 'include_clipboard_script' ) );
 		}
@@ -35,6 +32,7 @@ if ( ! class_exists( 'FooGallery_Admin_Columns' ) ) {
 					array( 'icon' => '' ) +
 					array_slice( $columns, 1, null, true ) +
 					array(
+						FOOGALLERY_CPT_GALLERY . '_template' => __( 'Template', 'foogallery' ),
 						FOOGALLERY_CPT_GALLERY . '_count' => __( 'Media', 'foogallery' ),
 						FOOGALLERY_CPT_GALLERY . '_shortcode' => __( 'Shortcode', 'foogallery' ),
 					);
@@ -44,6 +42,14 @@ if ( ! class_exists( 'FooGallery_Admin_Columns' ) ) {
 			global $post;
 
 			switch ( $column ) {
+				case FOOGALLERY_CPT_GALLERY . '_template':
+					$gallery = FooGallery::get( $post );
+					$template = $gallery->gallery_template_details();
+					if ( false !== $template ) {
+						echo $template['name'];
+					}
+
+					break;
 				case FOOGALLERY_CPT_GALLERY . '_count':
 					$gallery = FooGallery::get( $post );
 					echo $gallery->image_count();

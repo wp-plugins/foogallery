@@ -5,16 +5,30 @@ if ( isset( $_POST['foogallery_nextgen_reset'] ) ) {
 	if ( check_admin_referer( 'foogallery_nextgen_import_reset', 'foogallery_nextgen_import_reset' ) ) {
 		$nextgen->reset_import();
 	}
+} else if ( isset( $_POST['foogallery_nextgen_reset_album'] ) ) {
+
+	if ( check_admin_referer( 'foogallery_nextgen_album_reset', 'foogallery_nextgen_album_reset' ) ) {
+		$nextgen->reset_album_import();
+	}
 }
 ?>
 <style>
+	.foo-nav-tabs a:focus {
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
+
 	.spinner.shown {
 		display: inline !important;
 		margin: 0;
 	}
 
-	.nextgen-import-progress-not_started {
+	.nextgen-import-progress-error {
 		color: #f00 !important;
+	}
+
+	.nextgen-import-progress-not_started {
+		color: #f60 !important;
 	}
 
 	.nextgen-import-progress-started {
@@ -44,6 +58,10 @@ if ( isset( $_POST['foogallery_nextgen_reset'] ) ) {
 	#nextgen_import_form .dashicons-arrow-right {
 		font-size: 2em;
 		margin-top: -0.2em;
+	}
+
+	.nextgen_import_container {
+		margin-top: 10px;
 	}
 </style>
 <script>
@@ -107,26 +125,109 @@ if ( isset( $_POST['foogallery_nextgen_reset'] ) ) {
 		});
 
 		$('#nextgen_import_form').on('click', '.reset_import', function (e) {
-			if (!confirm('<?php _e( 'Are you sure you want to reset all NextGen import data? This may result in duplicate galleries and media attachments!', 'foogallery' ); ?>')) {
+			if (!confirm('<?php _e( 'Are you sure you want to reset all NextGen gallery import data? This may result in duplicate galleries and media attachments!', 'foogallery' ); ?>')) {
 				e.preventDefault();
 				return false;
 			}
 		});
+
+		$('#nextgen_import_album_form').on('click', '.reset_album_import', function (e) {
+			if (!confirm('<?php _e( 'Are you sure you want to reset all NextGen album import data? This may result in duplicate albums if you decide to import again!', 'foogallery' ); ?>')) {
+				e.preventDefault();
+				return false;
+			}
+		});
+
+		$('#nextgen_import_album_form').on('click', '.start_album_import', function (e) {
+			e.preventDefault();
+
+			//show the spinner
+			$(this).hide();
+			var $tr = $(this).parents('tr:first');
+			$tr.find('.spinner:first').show();
+
+			var data = {
+				action: 'foogallery_nextgen_album_import',
+				foogallery_nextgen_album_import: $('#foogallery_nextgen_album_import').val(),
+				nextgen_album_id: $tr.find('.foogallery-album-id').val(),
+				foogallery_album_name: $tr.find('.foogallery-album-name').val()
+			};
+
+			$.ajax({
+				type: "POST",
+				url: ajaxurl,
+				data: data,
+				success: function(data) {
+					$('#nextgen_import_album_form').html(data);
+				},
+				error: function() {
+					//something went wrong! Alert the user and reload the page
+					alert('<?php _e( 'Something went wrong with the import and the page will now reload.', 'foogallery' ); ?>');
+					location.reload();
+				}
+			});
+		});
+
+		$('.foo-nav-tabs').on('click', 'a', function (e) {
+			$('.nextgen_import_container').hide();
+			var tab = $(this).data('tab');
+			$('#' + tab).show();
+			$('.nav-tab').removeClass('nav-tab-active');
+			$(this).addClass('nav-tab-active');
+		});
+
+		if (window.location.hash) {
+			$('.foo-nav-tabs a[href="' + window.location.hash + '"]').click();
+		}
 	});
 </script>
 <div class="wrap about-wrap">
-	<h2><?php _e( 'NextGen Gallery Importer', 'foogallery' ); ?></h2>
+	<h2><?php _e( 'NextGen Gallery And Album Importer', 'foogallery' ); ?></h2>
 
-	<div class="foogallery-help">
-		<?php printf( __( 'Choose the NextGen galleries you want to import into %s. Please note that importing galleries with lots of images can take a while.', 'foogallery' ), foogallery_plugin_name() ); ?>
-	</div>
+	<h2 class="foo-nav-tabs nav-tab-wrapper">
+		<a href="#galleries" data-tab="nextgen_import_galleries" class="nav-tab nav-tab-active"><?php _e('Galleries', 'foogallery'); ?></a>
+		<a href="#albums" data-tab="nextgen_import_albums" class="nav-tab"><?php _e('Albums', 'foogallery'); ?></a>
+	</h2>
+
+	<div class="nextgen_import_container" id="nextgen_import_galleries">
 	<?php
 	$galleries = $nextgen->get_galleries();
 	if ( ! $galleries ) {
 		_e( 'There are no NextGen galleries to import!', 'foogallery' );
 	} else { ?>
+		<div class="foogallery-help">
+			<?php _e( 'Importing galleries is really simple:', 'foogallery' ); ?>
+			<ol>
+				<li><?php printf( __( 'Choose the NextGen galleries you want to import into %s by checking their checkboxes.', 'foogallery' ), foogallery_plugin_name() ); ?></li>
+				<li><?php _e( 'Click the Start Import button to start the import process.', 'foogallery' ); ?></li>
+				<li><?php printf( __( 'Once a gallery is imported, you can click on the link under the %s Name column to edit the gallery.', 'foogallery' ), foogallery_plugin_name() ); ?></li>
+			</ol>
+			<?php _e('Please note: importing large galleries with lots of images can take a while!', 'foogallery' ); ?>
+		</div>
+
 		<form id="nextgen_import_form" method="POST">
 			<?php $nextgen->render_import_form( $galleries ); ?>
 		</form>
 	<?php } ?>
+	</div>
+	<div class="nextgen_import_container" id="nextgen_import_albums" style="display: none">
+	<?php
+	$albums = $nextgen->get_albums();
+	if ( ! $albums ) {
+		_e( 'There are no NextGen albums to import!', 'foogallery' );
+	} else { ?>
+		<div class="foogallery-help">
+			<?php _e( 'Importing albums is also really simple:', 'foogallery' ); ?>
+			<ol>
+				<li><?php _e( __( 'For all the albums you wish to import, make sure all the galleries have been imported FIRST. If not, then go back to the Galleries tab.', 'foogallery' )); ?></li>
+				<li><?php _e( 'Click the Import Album button for each album to import the album and link all the galleries. If you do not see the button, then that means you first need to import the galleries.', 'foogallery' ); ?></li>
+				<li><?php _e( 'Once an album is imported, you can click on the link under the Album Name column to edit the album.', 'foogallery'); ?></li>
+			</ol>
+		</div>
+
+		<form id="nextgen_import_album_form" method="POST">
+			<?php $nextgen->render_album_import_form( $albums ); ?>
+		</form>
+	<?php } ?>
+	</div>
 </div>

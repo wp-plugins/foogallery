@@ -24,6 +24,7 @@ if ( ! class_exists( 'FooGallery_Admin' ) ) {
 			new FooGallery_Admin_Columns();
 			new FooGallery_Admin_Extensions();
 			new FooGallery_Boilerplate_Download_Handler();
+			new FooGallery_Attachment_Fields();
 		}
 
 		function init() {
@@ -32,9 +33,9 @@ if ( ! class_exists( 'FooGallery_Admin' ) ) {
 			add_action( 'foogallery_admin_print_scripts', array( $this, 'admin_print_scripts' ) );
 			// Add a links to the plugin listing
 			add_filter( 'foogallery_admin_plugin_action_links', array( $this, 'plugin_listing_links' ) );
-
 			//output shortcode for javascript
 			add_action( 'admin_footer', array( $this, 'output_shortcode_variable' ), 200 );
+			add_action( 'upgrader_process_complete', array( $this, 'plugin_updated' ), 10, 2 );
 		}
 
 
@@ -73,6 +74,20 @@ if ( ! class_exists( 'FooGallery_Admin' ) ) {
 					window.FOOGALLERY_SHORTCODE = '<?php echo foogallery_gallery_shortcode_tag(); ?>';
 				</script>
 			<?php
+			}
+		}
+
+		/**
+		 * Runs after FooGallery has been updated via the backend
+		 *
+		 * @param $upgrader_object
+		 * @param $options
+		 */
+		function plugin_updated( $upgrader_object, $options ) {
+			//only clear the extensions if foogallery was updated
+			if ( array_key_exists( 'plugin', $options ) && 'foogallery/foogallery.php' === $options['plugin'] ) {
+				$api = new FooGallery_Extensions_API();
+				$api->clear_cached_extensions();
 			}
 		}
 	}

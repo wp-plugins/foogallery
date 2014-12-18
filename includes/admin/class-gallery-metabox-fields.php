@@ -23,7 +23,7 @@ if ( ! class_exists( 'FooGallery_Admin_Gallery_MetaBox_Fields' ) ) {
 			$template_slug = $template['slug'];
 
 			//only declare up front so no debug warnings are shown
-			$type = $id = $desc = $default = $placeholder = $choices = $class = $spacer = null;
+			$type = $id = $desc = $default = $placeholder = $choices = $class = $spacer = $opactiy = null;
 
 			extract( $field );
 
@@ -97,7 +97,12 @@ if ( ! class_exists( 'FooGallery_Admin_Gallery_MetaBox_Fields' ) ) {
 					break;
 
 				case 'text':
-					echo '<input' . $field_class . '" type="text" id="FooGallerySettings_' . $id . '" name="' . FOOGALLERY_META_SETTINGS . '[' . $id . ']" value="' . esc_attr( $field['value'] ) . '" />';
+					echo '<input' . $field_class . ' type="text" id="FooGallerySettings_' . $id . '" name="' . FOOGALLERY_META_SETTINGS . '[' . $id . ']" value="' . esc_attr( $field['value'] ) . '" />';
+
+					break;
+
+				case 'colorpicker':
+					echo '<input class="minicolors" type="text" id="FooGallerySettings_' . $id . '" name="' . FOOGALLERY_META_SETTINGS . '[' . $id . ']" value="' . esc_attr( $field['value'] ) . '" />';
 
 					break;
 
@@ -171,10 +176,6 @@ if ( ! class_exists( 'FooGallery_Admin_Gallery_MetaBox_Fields' ) ) {
 		function alter_gallery_template_field( $field, $gallery ) {
 			if ( $field ) {
 				switch ( $field['type'] ) {
-//					case 'thumb_size':
-//						$field['type'] = 'select';
-//						$field['choices'] = $this->get_thumb_size_choices();
-//						break;
 					case 'thumb_link':
 						$field['type'] = 'radio';
 						$field['choices'] = $this->get_thumb_link_field_choices();
@@ -234,9 +235,10 @@ if ( ! class_exists( 'FooGallery_Admin_Gallery_MetaBox_Fields' ) ) {
 
 		function get_thumb_link_field_choices() {
 			return apply_filters( 'foogallery_gallery_template_field_thumb_links', array(
-				'image' => __( 'Full Size Image', 'foogallery' ),
-				'page'  => __( 'Image Attachment Page', 'foogallery' ),
-				'none'  => __( 'Not linked', 'foogallery' ),
+				'image'  => __( 'Full Size Image', 'foogallery' ),
+				'page'   => __( 'Image Attachment Page', 'foogallery' ),
+				'custom' => __( 'Custom URL', 'foogallery' ),
+				'none'   => __( 'Not linked', 'foogallery' ),
 			) );
 		}
 

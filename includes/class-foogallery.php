@@ -45,6 +45,7 @@ class FooGallery extends stdClass {
 		$this->attachment_ids = is_array( $attachment_meta ) ? array_filter( $attachment_meta ) : array();
 		$this->gallery_template = get_post_meta( $post->ID, FOOGALLERY_META_TEMPLATE, true );
 		$this->settings = get_post_meta( $post->ID, FOOGALLERY_META_SETTINGS, true );
+		$this->custom_css = get_post_meta( $post->ID, FOOGALLERY_META_CUSTOM_CSS, true );
 		do_action( 'foogallery_foogallery_instance_after_load', $this, $post );
 	}
 
@@ -194,6 +195,8 @@ class FooGallery extends stdClass {
 
 			if ( ! empty( $this->attachment_ids ) ) {
 
+				add_action( 'pre_get_posts', array( $this, 'force_gallery_ordering' ), 99 );
+
 				$attachments = get_posts( array(
 					'post_type'      => 'attachment',
 					'posts_per_page' => -1,
@@ -201,11 +204,27 @@ class FooGallery extends stdClass {
 					'orderby'        => 'post__in',
 				) );
 
+				remove_action( 'pre_get_posts', array( $this, 'force_gallery_ordering' ), 99 );
+
 				$this->_attachments = array_map( array( 'FooGalleryAttachment', 'get' ), $attachments );
 			}
 		}
 
 		return $this->_attachments;
+	}
+
+	/**
+	 * This forces the attachments to be fetched using the correct ordering.
+	 * Some plugins / themes override this globally for some reason, so this is a preventative measure to ensure sorting is correct
+	 * @param $query WP_Query
+	 */
+	public function force_gallery_ordering( $query ) {
+		//only care about attachments
+		if ( array_key_exists( 'post_type', $query->query ) &&
+		     'attachment' === $query->query['post_type'] ) {
+			$query->set( 'orderby', 'post__in' );
+			$query->set( 'order', 'ASC' );
+		}
 	}
 
 	/**
